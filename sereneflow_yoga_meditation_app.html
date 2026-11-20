@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SereneFlow - Yoga & Meditation</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sage: {
+                            50: '#f4f7f4',
+                            100: '#e5ede5',
+                            200: '#c8dbc8',
+                            300: '#a3c2a3',
+                            400: '#79a379',
+                            500: '#5c8a5c',
+                            600: '#476e47',
+                            700: '#3a573a',
+                            800: '#314731',
+                            900: '#283b28',
+                        },
+                        sand: {
+                            50: '#fbf9f5',
+                            100: '#f5efe6',
+                            200: '#ebe0d0',
+                            300: '#dfccb0',
+                            400: '#cea883',
+                            500: '#b88d63',
+                            600: '#a1734f',
+                            700: '#835c40',
+                            800: '#6c4a35',
+                            900: '#593d2e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter Font & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full bg-sand-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 transition-colors duration-300 flex justify-center items-center p-0 sm:p-4">
+
+    <!-- Mobile-First Container Simulator (Flutter Dashboard Vibe) -->
+    <div id="app-container" class="w-full sm:max-w-md h-full sm:h-[90vh] bg-white dark:bg-zinc-900 sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative border border-sand-200 dark:border-zinc-800">
+
+        <!-- Top Status Bar Simulation -->
+        <div class="px-6 pt-3 pb-1 flex justify-between items-center text-xs font-medium text-zinc-400 bg-white/80 dark:bg-zinc-900/80 backdrop-blur sticky top-0 z-30">
+            <span id="current-time">9:41</span>
+            <div class="flex items-center space-x-2">
+                <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
+                <i data-lucide="battery" class="w-4 h-4"></i>
+            </div>
+        </div>
+
+        <!-- Main Dynamic Content Scrollable Area -->
+        <main id="main-content" class="flex-1 overflow-y-auto no-scrollbar pb-24 relative">
+            <!-- Views will be injected here via JavaScript -->
+        </main>
+
+        <!-- Bottom Navigation Bar (Flutter Style) -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-t border-sand-200 dark:border-zinc-800 px-4 py-2 flex justify-around items-center z-40">
+            <button onclick="switchTab('home')" class="nav-btn flex flex-col items-center py-1 px-3 text-sage-600 dark:text-sage-400 transition" data-tab="home">
+                <i data-lucide="home" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-medium">Home</span>
+            </button>
+            <button onclick="switchTab('yoga')" class="nav-btn flex flex-col items-center py-1 px-3 text-zinc-400 hover:text-sage-600 dark:hover:text-sage-400 transition" data-tab="yoga">
+                <i data-lucide="activity" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-medium">Yoga</span>
+            </button>
+            <button onclick="switchTab('meditation')" class="nav-btn flex flex-col items-center py-1 px-3 text-zinc-400 hover:text-sage-600 dark:hover:text-sage-400 transition" data-tab="meditation">
+                <i data-lucide="wind" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-medium">Breathe</span>
+            </button>
+            <button onclick="switchTab('library')" class="nav-btn flex flex-col items-center py-1 px-3 text-zinc-400 hover:text-sage-600 dark:hover:text-sage-400 transition" data-tab="library">
+                <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-medium">Poses</span>
+            </button>
+            <button onclick="switchTab('stats')" class="nav-btn flex flex-col items-center py-1 px-3 text-zinc-400 hover:text-sage-600 dark:hover:text-sage-400 transition" data-tab="stats">
+                <i data-lucide="bar-chart-2" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-medium">Stats</span>
+            </button>
+            <button onclick="switchTab('settings')" class="nav-btn flex flex-col items-center py-1 px-3 text-zinc-400 hover:text-sage-600 dark:hover:text-sage-400 transition" data-tab="settings">
+                <i data-lucide="settings" class="w-5 h-5 mb-1"></i>
+                <span class="text-[10px] font-medium">Settings</span>
+            </button>
+        </nav>
+
+        <!-- Custom Notification Toast Modal -->
+        <div id="toast" class="absolute top-12 left-1/2 transform -translate-x-1/2 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 px-4 py-2 rounded-full shadow-lg text-xs font-medium opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center space-x-2">
+            <i data-lucide="check-circle" class="w-4 h-4 text-sage-400"></i>
+            <span id="toast-msg">Action completed!</span>
+        </div>
+
+    </div>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        // --- State Management & LocalStorage ---
+        const DEFAULT_STATE = {
+            streak: 5,
+            totalMinutes: 125,
+            sessionsCompleted: 14,
+            soundEnabled: true,
+            darkMode: false,
+            reminders: true,
+            weeklyData: [20, 45, 30, 60, 15, 50, 25], // Mon-Sun mins
+            lastActiveDate: new Date().toDateString()
+        };
+
+        let appState = JSON.parse(localStorage.getItem('sereneflow_state')) || DEFAULT_STATE;
+
+        function saveState() {
+            localStorage.setItem('sereneflow_state', JSON.stringify(appState));
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-2');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-2');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+
+        // --- Clock Simulator ---
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('current-time').innerText = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- Data Repositories ---
+        const quotes = [
+            { quote: "Peace comes from within. Do not seek it without.", author: "Buddha" },
+            { quote: "Yoga is the journey of the self, through the self, to the self.", author: "Bhagavad Gita" },
+            { quote: "Breathe in deeply, let go of worries, and arrive in the present moment.", author: "Thich Nhat Hanh" },
+            { quote: "Quiet the mind and the soul will speak.", author: "Ma Jaya Sati Bhagavati" }
+        ];
+        const dailyQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+        const yogaFlows = [
+            {
+                id: 'vinyasa',
+                title: 'Morning Vinyasa Flow',
+                category: 'Energy & Flexibility',
+                duration: '15 mins',
+                level: 'Intermediate',
+                calories: '120 kcal',
+                image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80',
+                description: 'Energize your body and focus your mind with this smooth flowing sequence.',
+                poses: [
+                    { name: 'Child’s Pose (Balasana)', duration: '2 mins', instruction: 'Kneel on the floor, sit back on your heels, and stretch your arms forward.' },
+                    { name: 'Cat-Cow Stretch (Marjaryasana)', duration: '2 mins', instruction: 'Alternate between arching your back towards the ceiling and dipping your belly.' },
+                    { name: 'Downward-Facing Dog', duration: '3 mins', instruction: 'Form an inverted V-shape with your body, pressing palms and heels gently down.' },
+                    { name: 'Warrior I (Virabhadrasana I)', duration: '4 mins', instruction: 'Step one foot back, bend front knee, and reach arms high toward the sky.' },
+                    { name: 'Corpse Pose (Savasana)', duration: '4 mins', instruction: 'Lie flat on your back, relax all muscles, and breathe deeply.' }
+                ]
+            },
+            {
+                id: 'hatha',
+                title: 'Hatha Relaxation & Stretch',
+                category: 'Relaxation & Calm',
+                duration: '20 mins',
+                level: 'Beginner',
+                calories: '90 kcal',
+                image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80',
+                description: 'A gentle, grounding practice focusing on posture and conscious breathing.',
+                poses: [
+                    { name: 'Easy Seated Pose (Sukhasana)', duration: '3 mins', instruction: 'Sit comfortably cross-legged with a straight spine, eyes closed.' },
+                    { name: 'Seated Forward Fold', duration: '4 mins', instruction: 'Extend legs forward and gently fold from the hips towards your toes.' },
+                    { name: 'Bridge Pose (Setu Bandhasana)', duration: '4 mins', instruction: 'Lie on back, bend knees, and lift hips upward engaging glutes.' },
+                    { name: 'Supine Spinal Twist', duration: '5 mins', instruction: 'Drop knees to one side while keeping shoulders flat on the floor.' },
+                    { name: 'Deep Rest (Savasana)', duration: '4 mins', instruction: 'Surrender your weight completely to the ground.' }
+                ]
+            },
+            {
+                id: 'power',
+                title: 'Core & Power Yoga',
+                category: 'Strength & Tone',
+                duration: '25 mins',
+                level: 'Advanced',
+                calories: '180 kcal',
+                image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80',
+                description: 'Build core stability, muscular strength, and mental endurance.',
+                poses: [
+                    { name: 'Plank Pose', duration: '3 mins', instruction: 'Engage core and maintain a straight line from head to heels.' },
+                    { name: 'Four-Limbed Staff (Chaturanga)', duration: '3 mins', instruction: 'Lower halfway down from plank with elbows tucked close to ribs.' },
+                    { name: 'Upward-Facing Dog', duration: '4 mins', instruction: 'Straighten arms and lift chest upward, hips hovering.' },
+                    { name: 'Warrior III', duration: '5 mins', instruction: 'Balance on one leg while extending torso and back leg parallel to floor.' },
+                    { name: 'Boat Pose (Navasana)', duration: '5 mins', instruction: 'Balance on sit bones, lifting chest and straight legs in V-shape.' },
+                    { name: 'Resting Child Pose', duration: '5 mins', instruction: 'Restore and integrate energy.' }
+                ]
+            }
+        ];
+
+        const posesDirectory = [
+            { name: 'Downward-Facing Dog', sanskrit: 'Adho Mukha Svanasana', level: 'Beginner', target: 'Full Body & Hamstrings', benefits: 'Strengthens arms and legs, stretches calves and hamstrings, calms brain.', image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=400&q=80' },
+            { name: 'Warrior II', sanskrit: 'Virabhadrasana II', level: 'Intermediate', target: 'Legs & Hips', benefits: 'Improves stamina, strengthens legs and ankles, opens hips and chest.', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80' },
+            { name: 'Tree Pose', sanskrit: 'Vrksasana', level: 'Beginner', target: 'Balance & Core', benefits: 'Improves balance and posture, strengthens thighs, calves, and ankles.', image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=400&q=80' },
+            { name: 'Child’s Pose', sanskrit: 'Balasana', level: 'Beginner', target: 'Back & Hips', benefits: 'Gently stretches lower back and hips, relieves stress and fatigue.', image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=400&q=80' },
+            { name: 'Cobra Pose', sanskrit: 'Bhujangasana', level: 'Beginner', target: 'Spine & Chest', benefits: 'Strengthens spine, opens chest and lungs, relieves fatigue and stress.', image: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?auto=format&fit=crop&w=400&q=80' },
+            { name: 'Bridge Pose', sanskrit: 'Setu Bandhasana', level: 'Beginner', target: 'Glutes & Spine', benefits: 'Stretches chest, neck, and spine, calms brain and reduces anxiety.', image: 'https://images.unsplash.com/photo-1510846430448-f686e24749f6?auto=format&fit=crop&w=400&q=80' }
+        ];
+
+        // --- Active Tab Controller ---
+        let currentTab = 'home';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            // Update active nav buttons styling
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.tab === tab) {
+                    btn.classList.add('text-sage-600', 'dark:text-sage-400');
+                    btn.classList.remove('text-zinc-400');
+                } else {
+                    btn.classList.remove('text-sage-600', 'dark:text-sage-400');
+                    btn.classList.add('text-zinc-400');
+                }
+            });
+
+            const mainContent = document.getElementById('main-content');
+            mainContent.scrollTop = 0;
+
+            if (tab === 'home') renderHomeView(mainContent);
+            else if (tab === 'yoga') renderYogaView(mainContent);
+            else if (tab === 'meditation') renderMeditationView(mainContent);
+            else if (tab === 'library') renderLibraryView(mainContent);
+            else if (tab === 'stats') renderStatsView(mainContent);
+            else if (tab === 'settings') renderSettingsView(mainContent);
+            
+            lucide.createIcons();
+        }
+
+        // --- 1. HOME / DASHBOARD VIEW ---
+        function renderHomeView(container) {
+            container.innerHTML = `
+                <div class="p-6 space-y-6">
+                    <!-- Greeting & Header -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-sage-600 dark:text-sage-400">Welcome Back</p>
+                            <h1 class="text-2xl font-bold tracking-tight">Inner Harmony</h1>
+                        </div>
+                        <div class="flex items-center space-x-2 bg-sage-50 dark:bg-zinc-800 px-3 py-1.5 rounded-full border border-sage-200 dark:border-zinc-700">
+                            <i data-lucide="flame" class="w-4 h-4 text-orange-500 fill-orange-500"></i>
+                            <span class="text-xs font-bold text-sage-700 dark:text-sage-300">${appState.streak} Day Streak</span>
+                        </div>
+                    </div>
+
+                    <!-- Daily Quote Card -->
+                    <div class="bg-gradient-to-br from-sage-100 to-sage-200 dark:from-zinc-800 dark:to-zinc-800/60 p-5 rounded-2xl border border-sage-300/40 dark:border-zinc-700 shadow-sm relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <i data-lucide="sun" class="w-28 h-28 text-sage-800 dark:text-white"></i>
+                        </div>
+                        <p class="text-xs font-semibold text-sage-700 dark:text-sage-300 uppercase tracking-widest mb-1">Daily Inspiration</p>
+                        <p class="text-sm italic font-medium text-zinc-700 dark:text-zinc-200 mb-2">"${dailyQuote.quote}"</p>
+                        <p class="text-xs font-semibold text-sage-800 dark:text-sage-400">— ${dailyQuote.author}</p>
+                    </div>
+
+                    <!-- Quick Start Buttons -->
+                    <div>
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-zinc-400 mb-3">Quick Start</h2>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="startQuickFlow('vinyasa')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-zinc-800 rounded-2xl border border-sand-200 dark:border-zinc-700 hover:border-sage-400 transition shadow-sm group">
+                                <div class="w-10 h-10 rounded-xl bg-sage-50 dark:bg-zinc-700 flex items-center justify-center text-sage-600 dark:text-sage-300 group-hover:scale-110 transition">
+                                    <i data-lucide="sun" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-xs font-semibold mt-2 text-center">Morning Stretch</span>
+                            </button>
+                            <button onclick="switchTab('meditation')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-zinc-800 rounded-2xl border border-sand-200 dark:border-zinc-700 hover:border-sage-400 transition shadow-sm group">
+                                <div class="w-10 h-10 rounded-xl bg-sage-50 dark:bg-zinc-700 flex items-center justify-center text-sage-600 dark:text-sage-300 group-hover:scale-110 transition">
+                                    <i data-lucide="wind" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-xs font-semibold mt-2 text-center">Deep Breathing</span>
+                            </button>
+                            <button onclick="startQuickFlow('hatha')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-zinc-800 rounded-2xl border border-sand-200 dark:border-zinc-700 hover:border-sage-400 transition shadow-sm group">
+                                <div class="w-10 h-10 rounded-xl bg-sage-50 dark:bg-zinc-700 flex items-center justify-center text-sage-600 dark:text-sage-300 group-hover:scale-110 transition">
+                                    <i data-lucide="heart" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-xs font-semibold mt-2 text-center">Mindfulness</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Category Selector & Featured Flows -->
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-sm font-bold uppercase tracking-wider text-zinc-400">Featured Flows</h2>
+                            <button onclick="switchTab('yoga')" class="text-xs font-semibold text-sage-600 dark:text-sage-400 hover:underline">See All</button>
+                        </div>
+                        <div class="space-y-3">
+                            ${yogaFlows.slice(0, 2).map(flow => `
+                                <div onclick="openYogaSession('${flow.id}')" class="flex items-center bg-white dark:bg-zinc-800 p-3 rounded-2xl border border-sand-200 dark:border-zinc-700 hover:border-sage-400 cursor-pointer transition shadow-sm">
+                                    <img src="${flow.image}" class="w-16 h-16 rounded-xl object-cover" alt="${flow.title}" />
+                                    <div class="ml-4 flex-1">
+                                        <span class="text-[10px] font-bold text-sage-600 dark:text-sage-400 uppercase tracking-wide">${flow.category}</span>
+                                        <h3 class="font-bold text-sm">${flow.title}</h3>
+                                        <div class="flex items-center space-x-3 text-xs text-zinc-400 mt-1">
+                                            <span class="flex items-center"><i data-lucide="clock" class="w-3 h-3 mr-1"></i>${flow.duration}</span>
+                                            <span class="flex items-center"><i data-lucide="award" class="w-3 h-3 mr-1"></i>${flow.level}</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-8 h-8 rounded-full bg-sage-50 dark:bg-zinc-700 flex items-center justify-center text-sage-600 dark:text-sage-300 mr-2">
+                                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 2. YOGA SESSION & TIMER MODE ---
+        function renderYogaView(container) {
+            container.innerHTML = `
+                <div class="p-6 space-y-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-sage-600 dark:text-sage-400">Guided Practice</p>
+                        <h1 class="text-2xl font-bold tracking-tight">Yoga Flows & Sequences</h1>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        ${yogaFlows.map(flow => `
+                            <div class="bg-white dark:bg-zinc-800 rounded-2xl border border-sand-200 dark:border-zinc-700 overflow-hidden shadow-sm">
+                                <div class="relative h-40">
+                                    <img src="${flow.image}" class="w-full h-full object-cover" alt="${flow.title}" />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                                        <div>
+                                            <span class="bg-sage-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">${flow.category}</span>
+                                            <h2 class="text-white font-bold text-lg mt-1">${flow.title}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-3">
+                                    <p class="text-xs text-zinc-500 dark:text-zinc-400">${flow.description}</p>
+                                    <div class="flex justify-between items-center text-xs text-zinc-400 border-t border-sand-100 dark:border-zinc-700 pt-3">
+                                        <span class="flex items-center"><i data-lucide="clock" class="w-3.5 h-3.5 mr-1 text-sage-600"></i>${flow.duration}</span>
+                                        <span class="flex items-center"><i data-lucide="bar-chart" class="w-3.5 h-3.5 mr-1 text-sage-600"></i>${flow.level}</span>
+                                        <span class="flex items-center"><i data-lucide="zap" class="w-3.5 h-3.5 mr-1 text-orange-500"></i>${flow.calories}</span>
+                                    </div>
+                                    <button onclick="openYogaSession('${flow.id}')" class="w-full py-2.5 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2">
+                                        <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+                                        <span>Start Practice</span>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Yoga Active Session Player State
+        let activeYogaFlow = null;
+        let currentPoseIndex = 0;
+        let sessionTimer = null;
+        let timeLeft = 0;
+        let isSessionPaused = false;
+
+        function openYogaSession(flowId) {
+            activeYogaFlow = yogaFlows.find(f => f.id === flowId);
+            currentPoseIndex = 0;
+            isSessionPaused = false;
+            startPoseTimer();
+            renderActiveYogaPlayer();
+        }
+
+        function startPoseTimer() {
+            clearInterval(sessionTimer);
+            timeLeft = 120; // 2 minutes per pose for demo
+            sessionTimer = setInterval(() => {
+                if (!isSessionPaused) {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        nextYogaPose();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const el = document.getElementById('yoga-timer-text');
+            if (el) {
+                const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                const secs = (timeLeft % 60).toString().padStart(2, '0');
+                el.innerText = `${mins}:${secs}`;
+            }
+        }
+
+        function toggleYogaPause() {
+            isSessionPaused = !isSessionPaused;
+            const btn = document.getElementById('pause-play-btn');
+            if(btn) {
+                btn.innerHTML = isSessionPaused ? '<i data-lucide="play" class="w-6 h-6 fill-white"></i>' : '<i data-lucide="pause" class="w-6 h-6 fill-white"></i>';
+                lucide.createIcons();
+            }
+        }
+
+        function nextYogaPose() {
+            if (currentPoseIndex < activeYogaFlow.poses.length - 1) {
+                currentPoseIndex++;
+                startPoseTimer();
+                renderActiveYogaPlayer();
+            } else {
+                completeYogaSession();
+            }
+        }
+
+        function prevYogaPose() {
+            if (currentPoseIndex > 0) {
+                currentPoseIndex--;
+                startPoseTimer();
+                renderActiveYogaPlayer();
+            }
+        }
+
+        function completeYogaSession() {
+            clearInterval(sessionTimer);
+            appState.totalMinutes += parseInt(activeYogaFlow.duration);
+            appState.sessionsCompleted += 1;
+            appState.weeklyData[6] += parseInt(activeYogaFlow.duration);
+            saveState();
+
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = `
+                <div class="p-6 flex flex-col items-center justify-center min-h-[70vh] text-center space-y-6">
+                    <div class="w-24 h-24 bg-sage-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-sage-600 dark:text-sage-400 animate-bounce">
+                        <i data-lucide="award" class="w-12 h-12"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Namaste! Session Complete</h1>
+                        <p class="text-xs text-zinc-500 mt-1">You completed the ${activeYogaFlow.title}. Wonderful dedication to your well-being.</p>
+                    </div>
+                    <div class="bg-sage-50 dark:bg-zinc-800 p-4 rounded-2xl w-full border border-sage-200 dark:border-zinc-700 flex justify-around">
+                        <div>
+                            <p class="text-xs text-zinc-400">Time Practiced</p>
+                            <p class="text-lg font-bold text-sage-600 dark:text-sage-400">${activeYogaFlow.duration}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-zinc-400">Calories Burned</p>
+                            <p class="text-lg font-bold text-orange-500">${activeYogaFlow.calories}</p>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('home')" class="w-full py-3 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-2xl text-sm transition shadow-md">
+                        Return to Dashboard
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+            showToast('Session logged successfully!');
+        }
+
+        function renderActiveYogaPlayer() {
+            const pose = activeYogaFlow.poses[currentPoseIndex];
+            const progressPct = ((currentPoseIndex + 1) / activeYogaFlow.poses.length) * 100;
+            const mainContent = document.getElementById('main-content');
+
+            mainContent.innerHTML = `
+                <div class="p-6 space-y-6 flex flex-col min-h-full">
+                    <!-- Top Bar -->
+                    <div class="flex justify-between items-center">
+                        <button onclick="clearInterval(sessionTimer); switchTab('yoga')" class="p-2 rounded-full bg-sand-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        </button>
+                        <span class="text-xs font-bold text-sage-600 dark:text-sage-400">Pose ${currentPoseIndex + 1} of ${activeYogaFlow.poses.length}</span>
+                        <div class="w-9"></div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-sand-200 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-sage-600 h-full transition-all duration-300" style="width: ${progressPct}%"></div>
+                    </div>
+
+                    <!-- Active Pose Info Card -->
+                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-3xl border border-sand-200 dark:border-zinc-700 shadow-sm text-center space-y-4 flex-1 flex flex-col justify-center">
+                        <div class="w-20 h-20 bg-sage-50 dark:bg-zinc-700 rounded-2xl mx-auto flex items-center justify-center text-sage-600 dark:text-sage-300">
+                            <i data-lucide="activity" class="w-10 h-10"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">${pose.name}</h2>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">${pose.instruction}</p>
+                        </div>
+                        
+                        <!-- Circular Countdown Timer -->
+                        <div class="py-4">
+                            <div id="yoga-timer-text" class="text-4xl font-extrabold text-sage-600 dark:text-sage-400 tracking-wider">02:00</div>
+                            <p class="text-[10px] uppercase font-semibold text-zinc-400 mt-1">Remaining for this pose</p>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="flex items-center justify-center space-x-6 pt-2">
+                        <button onclick="prevYogaPose()" class="p-3 rounded-full bg-sand-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-sage-100 transition">
+                            <i data-lucide="skip-back" class="w-5 h-5"></i>
+                        </button>
+                        <button id="pause-play-btn" onclick="toggleYogaPause()" class="w-16 h-16 rounded-full bg-sage-600 hover:bg-sage-700 text-white flex items-center justify-center shadow-lg transition">
+                            <i data-lucide="pause" class="w-6 h-6 fill-white"></i>
+                        </button>
+                        <button onclick="nextYogaPose()" class="p-3 rounded-full bg-sand-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-sage-100 transition">
+                            <i data-lucide="skip-forward" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // --- 3. MEDITATION & BREATHWORK TIMER (PRANAYAMA) ---
+        function renderMeditationView(container) {
+            container.innerHTML = `
+                <div class="p-6 space-y-6 flex flex-col items-center">
+                    <div class="w-full text-left">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-sage-600 dark:text-sage-400">Pranayama & Focus</p>
+                        <h1 class="text-2xl font-bold tracking-tight">Box Breathing Timer</h1>
+                    </div>
+
+                    <!-- Visual Breathing Circle Simulator -->
+                    <div class="relative w-64 h-64 flex items-center justify-center my-4">
+                        <div id="breath-outer-ring" class="absolute inset-0 bg-sage-200 dark:bg-zinc-800 rounded-full animate-pulse-slow opacity-50"></div>
+                        <div id="breath-circle" class="w-48 h-48 bg-sage-600 dark:bg-sage-700 text-white rounded-full flex flex-col items-center justify-center shadow-xl transition-all duration-1000 z-10">
+                            <span id="breath-instruction" class="text-lg font-bold tracking-wide">Ready</span>
+                            <span id="breath-countdown" class="text-2xl font-extrabold mt-1">4s</span>
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="flex space-x-4 w-full">
+                        <button id="start-breath-btn" onclick="toggleBreathwork()" class="flex-1 py-3 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-2xl text-sm transition shadow-md flex items-center justify-center space-x-2">
+                            <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+                            <span id="breath-btn-text">Start Breathwork</span>
+                        </button>
+                        <button onclick="resetBreathwork()" class="p-3 bg-sand-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 rounded-2xl hover:bg-sage-100 transition">
+                            <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <!-- Ambient Sound Simulator Toggle -->
+                    <div class="w-full bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-sand-200 dark:border-zinc-700 space-y-3 shadow-sm">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-400">Ambient Soundscapes</h2>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="toggleAmbientSound('rain', this)" class="ambient-btn py-2 px-3 rounded-xl border border-sand-200 dark:border-zinc-700 text-xs font-semibold flex items-center justify-center space-x-1 hover:border-sage-400 transition">
+                                <i data-lucide="cloud-rain" class="w-3.5 h-3.5 text-sage-600"></i>
+                                <span>Rain</span>
+                            </button>
+                            <button onclick="toggleAmbientSound('forest', this)" class="ambient-btn py-2 px-3 rounded-xl border border-sand-200 dark:border-zinc-700 text-xs font-semibold flex items-center justify-center space-x-1 hover:border-sage-400 transition">
+                                <i data-lucide="trees" class="w-3.5 h-3.5 text-sage-600"></i>
+                                <span>Forest</span>
+                            </button>
+                            <button onclick="toggleAmbientSound('waves', this)" class="ambient-btn py-2 px-3 rounded-xl border border-sand-200 dark:border-zinc-700 text-xs font-semibold flex items-center justify-center space-x-1 hover:border-sage-400 transition">
+                                <i data-lucide="waves" class="w-3.5 h-3.5 text-sage-600"></i>
+                                <span>Waves</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Breathwork Engine State
+        let breathInterval = null;
+        let isBreathingActive = false;
+        let breathPhaseIndex = 0;
+        const breathPhases = [
+            { name: 'Inhale', duration: 4, scale: 'scale-125' },
+            { name: 'Hold', duration: 4, scale: 'scale-125' },
+            { name: 'Exhale', duration: 4, scale: 'scale-75' },
+            { name: 'Hold', duration: 4, scale: 'scale-75' }
+        ];
+        let currentPhaseTimer = 4;
+        let activeAmbient = null;
+
+        function toggleBreathwork() {
+            isBreathingActive = !isBreathingActive;
+            const btnText = document.getElementById('breath-btn-text');
+            const startBtn = document.getElementById('start-breath-btn');
+
+            if (isBreathingActive) {
+                btnText.innerText = 'Pause Practice';
+                startBtn.classList.replace('bg-sage-600', 'bg-orange-600');
+                startBreathCycle();
+            } else {
+                btnText.innerText = 'Resume Practice';
+                startBtn.classList.replace('bg-orange-600', 'bg-sage-600');
+                clearInterval(breathInterval);
+            }
+        }
+
+        function startBreathCycle() {
+            clearInterval(breathInterval);
+            breathInterval = setInterval(() => {
+                const instructionEl = document.getElementById('breath-instruction');
+                const countdownEl = document.getElementById('breath-countdown');
+                const circleEl = document.getElementById('breath-circle');
+
+                if (currentPhaseTimer > 0) {
+                    currentPhaseTimer--;
+                    if(countdownEl) countdownEl.innerText = `${currentPhaseTimer + 1}s`;
+                } else {
+                    breathPhaseIndex = (breathPhaseIndex + 1) % breathPhases.length;
+                    currentPhaseTimer = breathPhases[breathPhaseIndex].duration - 1;
+                    const phase = breathPhases[breathPhaseIndex];
+                    
+                    if(instructionEl) instructionEl.innerText = phase.name;
+                    if(countdownEl) countdownEl.innerText = `${phase.duration}s`;
+                    
+                    if(circleEl) {
+                        circleEl.className = `w-48 h-48 bg-sage-600 dark:bg-sage-700 text-white rounded-full flex flex-col items-center justify-center shadow-xl transition-all duration-1000 z-10 ${phase.scale}`;
+                    }
+                }
+            }, 1000);
+        }
+
+        function resetBreathwork() {
+            isBreathingActive = false;
+            clearInterval(breathInterval);
+            breathPhaseIndex = 0;
+            currentPhaseTimer = 4;
+            renderMeditationView(document.getElementById('main-content'));
+            showToast('Breathwork reset.');
+        }
+
+        function toggleAmbientSound(soundType, btn) {
+            document.querySelectorAll('.ambient-btn').forEach(b => b.classList.remove('border-sage-600', 'bg-sage-50', 'dark:bg-zinc-700'));
+            if (activeAmbient === soundType) {
+                activeAmbient = null;
+                showToast('Ambient sound stopped.');
+            } else {
+                activeAmbient = soundType;
+                btn.classList.add('border-sage-600', 'bg-sage-50', 'dark:bg-zinc-700');
+                showToast(`Playing ${soundType} soundscape simulator.`);
+            }
+        }
+
+        // --- 4. LIBRARY / POSES DIRECTORY ---
+        function renderLibraryView(container) {
+            container.innerHTML = `
+                <div class="p-6 space-y-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-sage-600 dark:text-sage-400">Knowledge Base</p>
+                        <h1 class="text-2xl font-bold tracking-tight">Poses Directory</h1>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-zinc-400"></i>
+                        <input type="text" id="pose-search" oninput="filterPoses(this.value)" placeholder="Search yoga poses (e.g., Warrior, Cobra)..." class="w-full pl-10 pr-4 py-3 bg-white dark:bg-zinc-800 border border-sand-200 dark:border-zinc-700 rounded-2xl text-xs focus:outline-none focus:border-sage-500 transition shadow-sm" />
+                    </div>
+
+                    <!-- Poses List Container -->
+                    <div id="poses-list" class="space-y-3">
+                        ${renderPosesCards(posesDirectory)}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function renderPosesCards(poses) {
+            if (poses.length === 0) {
+                return `<p class="text-center text-xs text-zinc-400 py-8">No yoga poses found matching your search.</p>`;
+            }
+            return poses.map(pose => `
+                <div class="bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-sand-200 dark:border-zinc-700 flex items-center space-x-4 shadow-sm">
+                    <img src="${pose.image}" class="w-16 h-16 rounded-xl object-cover" alt="${pose.name}" />
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-sm">${pose.name}</h3>
+                            <span class="text-[10px] bg-sage-50 dark:bg-zinc-700 text-sage-700 dark:text-sage-300 font-semibold px-2 py-0.5 rounded-full">${pose.level}</span>
+                        </div>
+                        <p class="text-[10px] italic text-zinc-400 mb-1">${pose.sanskrit}</p>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1">${pose.benefits}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPoses(query) {
+            const filtered = posesDirectory.filter(p => 
+                p.name.toLowerCase().includes(query.toLowerCase()) || 
+                p.sanskrit.toLowerCase().includes(query.toLowerCase()) ||
+                p.target.toLowerCase().includes(query.toLowerCase())
+            );
+            document.getElementById('poses-list').innerHTML = renderPosesCards(filtered);
+            lucide.createIcons();
+        }
+
+        // --- 5. PROGRESS & STATS TRACKER ---
+        function renderStatsView(container) {
+            const maxMins = Math.max(...appState.weeklyData, 60);
+            container.innerHTML = `
+                <div class="p-6 space-y-6">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-sage-600 dark:text-sage-400">Activity Analytics</p>
+                        <h1 class="text-2xl font-bold tracking-tight">Your Progress</h1>
+                    </div>
+
+                    <!-- Summary KPI Cards -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-sand-200 dark:border-zinc-700 shadow-sm">
+                            <div class="flex items-center space-x-2 text-sage-600 dark:text-sage-400 mb-2">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                                <span class="text-xs font-semibold uppercase tracking-wide">Total Mins</span>
+                            </div>
+                            <p class="text-2xl font-extrabold">${appState.totalMinutes}m</p>
+                            <p class="text-[10px] text-zinc-400 mt-1">Lifetime practice</p>
+                        </div>
+                        <div class="bg-white dark:bg-zinc-800 p-4 rounded-2xl border border-sand-200 dark:border-zinc-700 shadow-sm">
+                            <div class="flex items-center space-x-2 text-orange-500 mb-2">
+                                <i data-lucide="flame" class="w-4 h-4 fill-orange-500"></i>
+                                <span class="text-xs font-semibold uppercase tracking-wide">Streak</span>
+                            </div>
+                            <p class="text-2xl font-extrabold">${appState.streak} Days</p>
+                            <p class="text-[10px] text-zinc-400 mt-1">Consistency score</p>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Consistency Chart -->
+                    <div class="bg-white dark:bg-zinc-800 p-5 rounded-3xl border border-sand-200 dark:border-zinc-700 shadow-sm space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-sm font-bold uppercase tracking-wider text-zinc-400">Weekly Consistency</h2>
+                            <span class="text-xs font-semibold text-sage-600 dark:text-sage-400">${appState.sessionsCompleted} Sessions Total</span>
+                        </div>
+                        <div class="flex justify-between items-end h-40 pt-6 px-2 border-b border-sand-100 dark:border-zinc-700 pb-2">
+                            ${appState.weeklyData.map((mins, idx) => {
+                                const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                                const heightPct = (mins / maxMins) * 100;
+                                return `
+                                    <div class="flex flex-col items-center space-y-2 flex-1">
+                                        <span class="text-[10px] font-bold text-zinc-400">${mins}m</span>
+                                        <div class="w-8 bg-sand-100 dark:bg-zinc-700 rounded-xl h-28 flex items-end overflow-hidden">
+                                            <div class="w-full bg-sage-600 dark:bg-sage-500 rounded-xl transition-all duration-500" style="height: ${heightPct}%"></div>
+                                        </div>
+                                        <span class="text-xs font-semibold text-zinc-500">${days[idx]}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // --- 6. SETTINGS / PROFILE ---
+        function renderSettingsView(container) {
+            container.innerHTML = `
+                <div class="p-6 space-y-6">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-sage-600 dark:text-sage-400">Preferences</p>
+                        <h1 class="text-2xl font-bold tracking-tight">Settings & Profile</h1>
+                    </div>
+
+                    <div class="bg-white dark:bg-zinc-800 rounded-3xl border border-sand-200 dark:border-zinc-700 overflow-hidden shadow-sm divide-y divide-sand-100 dark:divide-zinc-700">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-sage-50 dark:bg-zinc-700 flex items-center justify-center text-sage-600 dark:text-sage-300">
+                                    <i data-lucide="bell" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">Daily Reminders</h3>
+                                    <p class="text-xs text-zinc-400">Get notified for your daily practice</p>
+                                </div>
+                            </div>
+                            <input type="checkbox" ${appState.reminders ? 'checked' : ''} onchange="toggleSetting('reminders')" class="w-5 h-5 accent-sage-600 cursor-pointer" />
+                        </div>
+
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-sage-50 dark:bg-zinc-700 flex items-center justify-center text-sage-600 dark:text-sage-300">
+                                    <i data-lucide="moon" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">Dark Mode</h3>
+                                    <p class="text-xs text-zinc-400">Toggle dark color palette</p>
+                                </div>
+                            </div>
+                            <input type="checkbox" id="dark-mode-toggle" ${appState.darkMode ? 'checked' : ''} onchange="toggleDarkMode()" class="w-5 h-5 accent-sage-600 cursor-pointer" />
+                        </div>
+
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-sage-50 dark:bg-zinc-700 flex items-center justify-center text-sage-600 dark:text-sage-300">
+                                    <i data-lucide="volume-2" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">Sound Effects</h3>
+                                    <p class="text-xs text-zinc-400">Chimes and guidance feedback</p>
+                                </div>
+                            </div>
+                            <input type="checkbox" ${appState.soundEnabled ? 'checked' : ''} onchange="toggleSetting('soundEnabled')" class="w-5 h-5 accent-sage-600 cursor-pointer" />
+                        </div>
+                    </div>
+
+                    <!-- Reset Stats Button -->
+                    <div class="pt-2">
+                        <button onclick="resetStatsData()" class="w-full py-3 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-semibold rounded-2xl text-xs transition border border-red-200 dark:border-red-900 flex items-center justify-center space-x-2">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <span>Reset All Progress Stats</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function toggleSetting(key) {
+            appState[key] = !appState[key];
+            saveState();
+            showToast('Settings updated successfully.');
+        }
+
+        function toggleDarkMode() {
+            appState.darkMode = !appState.darkMode;
+            saveState();
+            if (appState.darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            showToast(appState.darkMode ? 'Dark mode enabled.' : 'Light mode enabled.');
+        }
+
+        function resetStatsData() {
+            if (confirm('Are you sure you want to reset all your progress data?')) {
+                appState = { ...DEFAULT_STATE };
+                saveState();
+                switchTab('settings');
+                showToast('Progress stats reset.');
+            }
+        }
+
+        function startQuickFlow(flowId) {
+            switchTab('yoga');
+            openYogaSession(flowId);
+        }
+
+        // --- Initialization ---
+        window.onload = function() {
+            if (appState.darkMode) {
+                document.documentElement.classList.add('dark');
+            }
+            switchTab('home');
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
